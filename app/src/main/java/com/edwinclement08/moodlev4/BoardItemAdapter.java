@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import com.mongodb.stitch.android.services.mongodb.MongoClient;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,18 +32,17 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
-        public TextView mTextView;
+        public View boardItemView;
 
-        public ViewHolder(TextView v) {
+        public ViewHolder(View v) {
             super(v);
-            mTextView = v;
+            boardItemView = v;
         }
     }
 
     public class BoardItem {
         private ObjectId objectId;
         private String name;
-        private  boolean checked;
         private List<String> tags;
 
         public BoardItem(final Document document) {
@@ -106,8 +107,8 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     public BoardItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                           int viewType) {
         // create a new view
-        TextView v = (TextView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_text_view, parent, false);
+        View v =  LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.board_tab_item_layout, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
@@ -117,7 +118,10 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(mDataset.get(position).getName());
+        BoardItem data = mDataset.get(position);
+        View el = holder.boardItemView;
+        ((TextView) el.findViewById(R.id.name)).setText(data.name);
+        ((TextView) el.findViewById(R.id.lastMessage)).setText(data.tags.toString());
 
     }
 
