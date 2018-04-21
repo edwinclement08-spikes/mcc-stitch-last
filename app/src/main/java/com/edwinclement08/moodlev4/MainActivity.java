@@ -15,10 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
 import com.mongodb.stitch.android.Auth;
 import com.mongodb.stitch.android.StitchClient;
 
@@ -51,11 +54,12 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.android.gms.auth.api.Auth.GOOGLE_SIGN_IN_API;
 import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
 
-
+//https://github.com/koush/ion
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, StitchClientListener {
@@ -95,6 +99,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+       setUserProfileData();
+    }
+
+    public void setUserProfileData()    {
         if(_client != null) {
             if(_client.isAuthenticated())   {
                 Auth user = _client.getAuth();
@@ -105,9 +113,26 @@ public class MainActivity extends AppCompatActivity
                             if(task.isSuccessful()) {
                                 Log.e(TAG, "onCreate: got a user, and details");
                                 UserProfile profile = task.getResult();
-                                Log.e(TAG, profile.getData().toString() );;
-                                Log.e(TAG, profile.getData().keySet().toString());
 
+                                Map<String, Object> data =  profile.getData();
+                                Log.e(TAG, data.toString() );;
+                                Log.e(TAG, data.keySet().toString());
+
+                                ImageView imageView = findViewById(R.id.imageView);
+
+                                String imageURL = profile.getData().get("picture").toString();
+
+//                                Ion.with(imageView)
+//                                        .placeholder(R.mipmap.ic_launcher_round)
+//                                        .error(R.drawable.ic_menu_camera)
+//                                        .load(profile.getData().get("picture").toString());
+                                new DownloadImageTask((ImageView) findViewById(R.id.imageView))
+                                        .execute(imageURL);
+
+                                Log.e(TAG, "onComplete: "+ imageURL);
+                                ((TextView)findViewById(R.id.nav_header_name)).setText(data.get("name").toString());  ;
+
+                                ((TextView)findViewById(R.id.nav_header_email)).setText(data.get("email").toString());  ;
 
                             } else {
                                 Log.e(TAG, "onCreate: got a user, BUFGGG");
@@ -165,7 +190,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_boards) {
+            // Handle the Boards action
+
+        } else if (id == R.id.nav_camera) {
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
 

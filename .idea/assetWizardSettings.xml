@@ -16,11 +16,26 @@
                             <entry key="actionbar">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/logout.png" />
-                                      <entry key="outputName" value="logout_icon" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/boards.png" />
+                                      <entry key="outputName" value="boards_icon" />
                                     </map>
                                   </option>
                                 </PersistentState>

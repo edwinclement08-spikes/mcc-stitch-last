@@ -13,4 +13,5 @@ public class BoardListFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.board_page, container, false);
     }
+
 }

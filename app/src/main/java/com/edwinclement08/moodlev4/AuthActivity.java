@@ -334,13 +334,13 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
 
                                         @Override
                                         public void onError(final FacebookException exception) {
-//                                            initTodoView();
+//                                            initTodoView(); TODO something is wrong here, error should mean no login
                                             initMoodleView();
                                         }
                                     });
                             LoginManager.getInstance().logInWithReadPermissions(
                                     AuthActivity.this,
-                                    Arrays.asList("public_profile"));
+                                    Arrays.asList("public_profile", "email"));
                         }
                     });
                     findViewById(R.id.fb_login_button_frame).setVisibility(View.VISIBLE);
