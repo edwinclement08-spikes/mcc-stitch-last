@@ -86,7 +86,6 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
 
     private static final int RC_MAIN_APP = 500;
 
-
     private CallbackManager _callbackManager;
     private GoogleApiClient _googleApiClient;
     private StitchClient _client;

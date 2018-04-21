@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -189,9 +191,11 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Class fragmentClass = null;
 
         if (id == R.id.nav_boards) {
             // Handle the Boards action
+           setMainFragment(BoardListFragment.class);
 
         } else if (id == R.id.nav_camera) {
             // Handle the camera action
@@ -224,8 +228,6 @@ public class MainActivity extends AppCompatActivity
                         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
                         startActivity(intent);
                         finishAffinity();
-
-
                     }
                 });
 
@@ -236,9 +238,29 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void setMainFragment(Class fragmentClass)   {
+        Fragment fragment = null;
+
+        if(fragmentClass != null)   {
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+// Insert the fragment by replacing any existing fragment
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+            setTitle(((NamedFragments)fragment).getTitle());
+
+        }
     }
 
 
@@ -247,8 +269,11 @@ public class MainActivity extends AppCompatActivity
         this._client = stitchClient;
 
         _mongoClient = new MongoClient(_client, "mongodb-atlas");
-        Log.i(TAG, "onReady: StitchClient recevied in MainActivity");
+        Log.i(TAG, "onReady: StitchClient received in MainActivity");
 //        initLogin();
+
+        setMainFragment(BoardListFragment.class);
+
     }
 
 
