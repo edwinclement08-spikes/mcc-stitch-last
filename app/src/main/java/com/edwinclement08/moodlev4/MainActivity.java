@@ -1,6 +1,8 @@
 package com.edwinclement08.moodlev4;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -14,6 +16,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.mongodb.stitch.android.Auth;
 import com.mongodb.stitch.android.StitchClient;
 
 import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
@@ -21,6 +27,7 @@ import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
 import com.mongodb.stitch.android.AuthListener;
 import com.mongodb.stitch.android.StitchClient;
 import com.mongodb.stitch.android.auth.AvailableAuthProviders;
+import com.mongodb.stitch.android.auth.UserProfile;
 import com.mongodb.stitch.android.auth.anonymous.AnonymousAuthProvider;
 import com.mongodb.stitch.android.auth.oauth2.facebook.FacebookAuthProvider;
 import com.mongodb.stitch.android.auth.oauth2.google.GoogleAuthProvider;
@@ -87,6 +94,36 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if(_client != null) {
+            if(_client.isAuthenticated())   {
+                Auth user = _client.getAuth();
+                if(user != null){
+                    user.getUserProfile().addOnCompleteListener(new OnCompleteListener<UserProfile>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UserProfile> task) {
+                            if(task.isSuccessful()) {
+                                Log.e(TAG, "onCreate: got a user, and details");
+                                UserProfile profile = task.getResult();
+                                Log.e(TAG, profile.getData().toString() );;
+                                Log.e(TAG, profile.getData().keySet().toString());
+
+
+                            } else {
+                                Log.e(TAG, "onCreate: got a user, BUFGGG");
+
+                            }
+                        }
+                    });
+                } else {
+                    Log.e(TAG, "onCreate: User is null....HOW??");
+                }
+            } else {
+                Log.e(TAG, "onCreate: MainActivity ::No user Logged in, how???");
+            }
+        } else {
+            Log.e(TAG, "onCreate: MainActivity ::no stitchClient Available");
+        }
     }
 
     @Override
@@ -141,15 +178,28 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_logout)   {
+
+            final MainActivity referenceToContext = this;
             if(_client != null) {
                 // StitchClient Exists
                 Log.i(TAG, "onNavigationItemSelected: Trying Logout");
-                _client.logout();
-                if(_client.isAuthenticated() == false)  {
-                    Log.i(TAG, "onNavigationItemSelected: Logout Success");
-                } else {
-                    Log.i(TAG, "onNavigationItemSelected: Logout Fail");
-                }
+                Task<Void> logoutTask = _client.logout();
+
+                logoutTask.addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                    // go Back to the login Screen
+                        Log.e(TAG, "go back to login Screen"   );
+                        Intent intent = new Intent(referenceToContext, AuthActivity.class );
+                        // | Intent.FLAG_ACTIVITY_NO_HISTORY
+                        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+                        startActivity(intent);
+                        finishAffinity();
+
+
+                    }
+                });
 
 
             } else {

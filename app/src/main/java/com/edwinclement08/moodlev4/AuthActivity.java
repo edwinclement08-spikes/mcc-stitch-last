@@ -35,8 +35,10 @@ import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -82,6 +84,9 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
     private static final long REFRESH_INTERVAL_MILLIS = 1000;
     private static final int RC_SIGN_IN = 421;
 
+    private static final int RC_MAIN_APP = 500;
+
+
     private CallbackManager _callbackManager;
     private GoogleApiClient _googleApiClient;
     private StitchClient _client;
@@ -97,7 +102,7 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_auth);
+        setContentView(R.layout.loading_layout);
 
 
 //        _handler = new Handler();
@@ -136,7 +141,10 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
     public void initMoodleView() {
         Log.e(TAG, "initMoodleView: Done"   );
         Intent intent = new Intent(this, MainActivity.class);
+        // | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME
+        intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
         startActivity(intent);
+//        startActivityForResult(intent,RC_MAIN_APP);
     }
 
 
@@ -155,6 +163,7 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
 
         @Override
         public void onLogout() {
+            Log.i(TAG, "onLogout: logging out");
             final AuthActivity activity = _main.get();
 
             final List<Task<Void>> futures = new ArrayList<>();
@@ -187,32 +196,6 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
         }
     }
 
-//    private static class ListRefresher implements Runnable {
-//
-//        private WeakReference<AuthActivity> _main;
-//
-//        public ListRefresher(final AuthActivity activity) {
-//            _main = new WeakReference<>(activity);
-//        }
-//
-//        @Override
-//        public void run() {
-//            final AuthActivity activity = _main.get();
-//            if (activity != null && activity._client.isAuthenticated()) {
-//                activity.refreshList().addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull final Task<Void> task) {
-//                        if (!task.isSuccessful()) {
-//                            Log.e(TAG, "Error refreshing list. Stopping auto refresh", task.getException());
-//                            return;
-//                        }
-//                        activity._handler.postDelayed(ListRefresher.this, REFRESH_INTERVAL_MILLIS);
-//                    }
-//                });
-//            }
-//        }
-//    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -223,6 +206,11 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
             handleGooglSignInResult(result);
             return;
         }
+
+//        if(requestCode == RC_MAIN_APP) {
+//            finishAndRemoveTask();
+//            return;
+//        }
 
         if (_callbackManager != null) {
             _callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -359,7 +347,7 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
                 }
 
                 if (info.hasGoogle()) {
-                    final GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    final GoogleSignInOptions.Builder gsoBuilder = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestScopes(new Scope(Scopes.EMAIL))
                             .requestServerAuthCode(info.getGoogle().getConfig().getClientId(), false);
                     final GoogleSignInOptions gso = gsoBuilder.build();
 
