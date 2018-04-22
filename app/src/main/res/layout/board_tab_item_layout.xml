@@ -14,14 +14,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/border"
+        android:background="@drawable/bottom_border"
+        android:baselineAligned="false"
         >
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="8dp"
+            android:padding="10dp"
 
             android:layout_weight="1">
 
@@ -29,45 +30,41 @@
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Title"
-                android:layout_weight="0"/>
+                android:layout_weight="0"
+                android:textSize="16sp"
+                android:textColor="@color/boardTitle"
+
+                android:fontFamily="@font/bitter_bold"
+                android:text="Title" />
 
             <TextView
                 android:id="@+id/lastMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Description"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:text="Description" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/imageView"
+
+        <android.support.constraint.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0"
-            android:src="@android:drawable/btn_star_big_on"/>
+            android:padding="6dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_weight="0">
+            <TextView
+                android:id="@+id/badge_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/item_count"
+                android:text="427"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
 
 
-            <ImageView
-                android:id="@+id/tag"
-                android:layout_width="20dp"
-                android:layout_height="match_parent"
-                android:background="#333"
-
-                />
-            <!--<ImageView-->
-                <!--android:id="@+id/imageView3"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                 <!--/>-->
-            <!--app:srcCompat="@drawable/ic_launcher_background"-->
-
-        </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -138,7 +138,7 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
     }
 
     public void initMoodleView() {
-        Log.e(TAG, "initMoodleView: Done"   );
+        Log.d(TAG, "initMoodleView: Done"   );
         Intent intent = new Intent(this, MainActivity.class);
         // | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME
         intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
@@ -215,13 +215,13 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
             _callbackManager.onActivityResult(requestCode, resultCode, data);
             return;
         }
-        Log.e(TAG, "Nowhere to send activity result for ourselves");
+        Log.d(TAG, "Nowhere to send activity result for ourselves");
     }
 
 
     private void handleGooglSignInResult(final GoogleSignInResult result) {
         if (result == null) {
-            Log.e(TAG, "Got a null GoogleSignInResult");
+            Log.d(TAG, "Got a null GoogleSignInResult");
             return;
         }
 

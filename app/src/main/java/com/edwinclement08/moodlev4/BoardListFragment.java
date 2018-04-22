@@ -29,7 +29,7 @@ public class BoardListFragment extends Fragment implements NamedFragments{
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new BoardItemAdapter();
+        mAdapter = new BoardItemAdapter(getContext());
         mRecyclerView.setAdapter(mAdapter);
 
         return view;

@@ -1,5 +1,7 @@
 package com.edwinclement08.moodlev4;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -27,6 +29,8 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     private MongoClient _mongoClient;
     public String TAG = "BoardAdapter";
 
+    private Context activityContext;
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
@@ -44,21 +48,27 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
         private ObjectId objectId;
         private String name;
         private List<String> tags;
+        private String id;
 
         public BoardItem(final Document document) {
             objectId = document.getObjectId("_id");
             name = document.getString("name");
             tags = (List<String>)document.get("tags");
-            Log.e(TAG, "BoardItem: " +  tags.toString() );
+            id = document.getString("id");
+            Log.d(TAG, "BoardItem: " +  tags.toString() );
         }
 
         public String getName()    {
             return name;
         }
+
+        public String getId()   {return id;}
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public BoardItemAdapter() {
+    public BoardItemAdapter(Context context) {
+
+        activityContext = context;
         StitchClientManager.registerListener(this);
         mDataset = new ArrayList<BoardItem>();
     }
@@ -77,7 +87,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
         this._client = stitchClient;
 
         _mongoClient = new MongoClient(_client, "mongodb-atlas");
-        Log.e(TAG, "onReady: Got data for the boards");
+        Log.d(TAG, "onReady: Got data for the boards");
 
         MongoClient.Collection boards = _mongoClient.getDatabase("data").getCollection("boards");
 
@@ -90,7 +100,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
                 if (task.isSuccessful()) {
                     final List<Document> documents = task.getResult();
                     mDataset.addAll(convertDocsToBoards(documents));
-                    Log.e(TAG, "then: sfe" + mDataset.toString());
+                    Log.d(TAG, "then: sfe" + mDataset.toString());
                     ref.notifyDataSetChanged();
                     return Tasks.forResult(null);
                 } else {
@@ -118,10 +128,20 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        BoardItem data = mDataset.get(position);
+        final BoardItem data = mDataset.get(position);
         View el = holder.boardItemView;
         ((TextView) el.findViewById(R.id.name)).setText(data.name);
         ((TextView) el.findViewById(R.id.lastMessage)).setText(data.tags.toString());
+        el.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent()
+                Log.i(TAG, "onClick: BoardItem Clicked with an ID of " + data.getId());
+                Intent intent = new Intent(activityContext, BoardActivity.class);
+                intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+                activityContext.startActivity(intent);
+            }
+        });
 
     }
 

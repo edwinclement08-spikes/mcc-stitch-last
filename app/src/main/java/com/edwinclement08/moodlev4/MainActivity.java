@@ -113,12 +113,12 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onComplete(@NonNull Task<UserProfile> task) {
                             if(task.isSuccessful()) {
-                                Log.e(TAG, "onCreate: got a user, and details");
+                                Log.d(TAG, "onCreate: got a user, and details");
                                 UserProfile profile = task.getResult();
 
                                 Map<String, Object> data =  profile.getData();
-                                Log.e(TAG, data.toString() );;
-                                Log.e(TAG, data.keySet().toString());
+                                Log.d(TAG, data.toString() );;
+                                Log.d(TAG, data.keySet().toString());
 
                                 ImageView imageView = findViewById(R.id.imageView);
 
@@ -131,13 +131,13 @@ public class MainActivity extends AppCompatActivity
                                 new DownloadImageTask((ImageView) findViewById(R.id.imageView))
                                         .execute(imageURL);
 
-                                Log.e(TAG, "onComplete: "+ imageURL);
+                                Log.d(TAG, "onComplete: "+ imageURL);
                                 ((TextView)findViewById(R.id.nav_header_name)).setText(data.get("name").toString());  ;
 
                                 ((TextView)findViewById(R.id.nav_header_email)).setText(data.get("email").toString());  ;
 
                             } else {
-                                Log.e(TAG, "onCreate: got a user, BUFGGG");
+                                Log.d(TAG, "onCreate: got a user, BUFGGG");
 
                             }
                         }
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
 
                     // go Back to the login Screen
-                        Log.e(TAG, "go back to login Screen"   );
+                        Log.d(TAG, "go back to login Screen"   );
                         Intent intent = new Intent(referenceToContext, AuthActivity.class );
                         // | Intent.FLAG_ACTIVITY_NO_HISTORY
                         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
