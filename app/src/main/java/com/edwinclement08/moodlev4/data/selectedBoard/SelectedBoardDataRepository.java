@@ -78,8 +78,8 @@ public class SelectedBoardDataRepository implements StitchClientListener {
                     dataSet.clear();
                     ArrayList<SelectedBoardItem> array = convertDocsToSelectedBoardItems(documents);
                     if(array.size() == 0)   {
-                        parentActivity.findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
-
+//                        parentActivity.findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
+                        Log.i(TAG, "then: No Messages on the Board");
                     } else {
                         SelectedBoardItem boardData = array.get(0);
                         Log.i(TAG, "then: return data" + boardData.toString());

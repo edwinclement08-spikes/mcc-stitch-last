@@ -71,19 +71,19 @@ public class SelectedBoardFragment extends Fragment {
             selectedBoardDataRepository = new SelectedBoardDataRepository("", getActivity());
 
         }
-//        Task<Void> x = selectedBoardDataRepository.getRefreshTask();
-//        x.addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//                Log.i(TAG, "onSuccess: Trying to set visibility");
-//                ArrayList<SelectedBoardItem.Message> p = selectedBoardDataRepository.getDataSet();
-//                if (p.size() == 0) {
-//                    getActivity().findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
-//                }
-//
-//
-//            }
-//        });
+        Task<Void> x = selectedBoardDataRepository.getRefreshTask();
+        x.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.i(TAG, "onSuccess: Trying to set visibility");
+                ArrayList<SelectedBoardItem.Message> p = selectedBoardDataRepository.getDataSet();
+                if (p.size() == 0) {
+                    getActivity().findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
+                }
+
+
+            }
+        });
 
         mAdapter = new SelectedBoardItemAdapter(getContext(), selectedBoardDataRepository);
         mRecyclerView.setAdapter(mAdapter);
