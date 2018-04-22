@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.edwinclement08.moodlev4.data.userInfo.UserData;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity
 
     private StitchClient _client;
     private MongoClient _mongoClient;
+    private UserData userData;
 
     private String TAG = "MoodleV4:MainActivity";
 
@@ -77,7 +80,7 @@ public class MainActivity extends AppCompatActivity
     public void setUserProfileData()    {
         if(_client != null) {
             if(_client.isAuthenticated())   {
-                Auth user = _client.getAuth();
+                final Auth user = _client.getAuth();
                 if(user != null){
                     user.getUserProfile().addOnCompleteListener(new OnCompleteListener<UserProfile>() {
                         @Override
@@ -93,13 +96,34 @@ public class MainActivity extends AppCompatActivity
                                 ImageView imageView = findViewById(R.id.imageView);
 
                                 String imageURL = profile.getData().get("picture").toString();
-
 //                                Ion.with(imageView)
 //                                        .placeholder(R.mipmap.ic_launcher_round)
 //                                        .error(R.drawable.ic_menu_camera)
 //                                        .load(profile.getData().get("picture").toString());
                                 new DownloadImageTask((ImageView) findViewById(R.id.imageView))
                                         .execute(imageURL);
+
+                                final String name = data.get("name").toString();
+                                final String email= data.get("email").toString();
+
+
+                                userData = UserData.getInstance();
+                                Task<String> userTask = userData.getUserData();
+                                userTask.continueWithTask(new Continuation<String, Task<Void>>() {
+                                    @Override
+                                    public Task<Void> then(@NonNull Task<String> task) throws Exception {
+                                        if (task.isSuccessful()) {
+                                            final String result = task.getResult();
+                                            userData.setName(name);
+                                            userData.setEmail(email);
+                                            userData.saveUserData();
+
+                                        }
+                                        return null;
+                                    }
+                                });
+
+
 
                                 Log.d(TAG, "onComplete: "+ imageURL);
                                 ((TextView)findViewById(R.id.nav_header_name)).setText(data.get("name").toString());  ;

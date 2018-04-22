@@ -30,7 +30,6 @@ public class BoardsDataRepository implements StitchClientListener {
         dataSet = new ArrayList<BoardsItem>();
 
         StitchClientManager.registerListener(this);
-
     }
 
     private List<BoardsItem> convertDocsToBoards(final List<Document> documents) {

@@ -1,8 +1,11 @@
 package com.edwinclement08.moodlev4;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,10 +20,14 @@ import android.view.ViewGroup;
 import com.edwinclement08.moodlev4.data.selectedBoard.SelectedBoardDataRepository;
 import com.edwinclement08.moodlev4.data.selectedBoard.SelectedBoardItem;
 import com.edwinclement08.moodlev4.data.selectedBoard.SelectedBoardItemAdapter;
+import com.edwinclement08.moodlev4.data.userInfo.UserData;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import static android.app.Activity.RESULT_OK;
 
 public class SelectedBoardFragment extends Fragment {
     private RecyclerView mRecyclerView;
@@ -30,6 +37,7 @@ public class SelectedBoardFragment extends Fragment {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     public String titleName = "Boards";             // TODO change this to the Board Name
 
+    public int ACTIVITY_CHOOSE_FILE = 234;
 
     SelectedBoardDataRepository selectedBoardDataRepository;
     public String TAG = "SelectedBoardFragment";
@@ -39,6 +47,39 @@ public class SelectedBoardFragment extends Fragment {
     @Override
     public LayoutInflater onGetLayoutInflater(@Nullable Bundle savedInstanceState) {
         return super.onGetLayoutInflater(savedInstanceState);
+    }
+
+
+
+    public void onBrowse(View view) {
+        Intent chooseFile;
+        Intent intent;
+        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+        chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+        chooseFile.setType("*/ *");
+        intent = Intent.createChooser(chooseFile, "Choose a file");
+        startActivityForResult(intent, ACTIVITY_CHOOSE_FILE);
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != RESULT_OK) return;
+        String path     = "";
+        if(requestCode == ACTIVITY_CHOOSE_FILE)
+        {
+            Uri uri = data.getData();
+
+            String FilePath = getRealPathFromURI(uri); // should the path be here in this string
+            Log.i(TAG, "onActivityResult: path" + uri);
+        }
+    }
+
+    public String getRealPathFromURI(Uri contentUri) {
+        String [] proj      = {MediaStore.Images.Media.DATA};
+        Cursor cursor       = getActivity().getContentResolver().query( contentUri, proj, null, null,null);
+        if (cursor == null) return null;
+        int column_index    = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
     @Override
@@ -81,9 +122,21 @@ public class SelectedBoardFragment extends Fragment {
                     getActivity().findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
                 }
 
+                SelectedBoardItem metaDataSet =  selectedBoardDataRepository.getMetaDataSet();
+                String owner_id = metaDataSet.getOwner_id();
+
+                // Check if current user is the owner
+                UserData userData = UserData.getInstance();
+                String userId = userData.getId();
+                Log.i(TAG, "onSuccess: UserID " + userId );
+                Log.i(TAG, "onSuccess: Owner " + owner_id);
+                if(userId.equals(owner_id)) {
+                    getActivity().findViewById(R.id.message_enter_section).setVisibility(View.VISIBLE);
+                }
 
             }
         });
+
 
         mAdapter = new SelectedBoardItemAdapter(getContext(), selectedBoardDataRepository);
         mRecyclerView.setAdapter(mAdapter);
@@ -96,6 +149,14 @@ public class SelectedBoardFragment extends Fragment {
                 refreshItems();
             }
         });
+
+        view.findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBrowse(v);
+            }
+        });
+
 
 
         return view;

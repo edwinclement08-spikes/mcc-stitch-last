@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.edwinclement08.moodlev4.BoardActivity;
 import com.edwinclement08.moodlev4.R;
+import com.edwinclement08.moodlev4.data.userInfo.UserData;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
@@ -26,6 +27,7 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
     public String TAG = "SelectedBoardItemAdapter";
 
     SelectedBoardDataRepository dataRepository;
+    UserData userData;
 
     private Context activityContext;
 
@@ -48,6 +50,7 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
 
         activityContext = context;
         this.dataRepository = dataRepository;
+        userData = UserData.getInstance();
 
         mDataset = new ArrayList<SelectedBoardItem.Message>();
 
@@ -87,7 +90,10 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
         final SelectedBoardItem.Message data = mDataset.get(position);
         View el = holder.boardItemView;
 
-        ((TextView) el.findViewById(R.id.author)).setText(data.getAuthor());
+        String authorName = userData.getIdToUserMap().get(data.getAuthor()).get(0);
+        Log.i(TAG, "onBindViewHolder: " + authorName);
+        ((TextView) el.findViewById(R.id.author)).setText(authorName);
+
         if(data.hasMessageText())  ((TextView) el.findViewById(R.id.message)).setText(data.getMessageText());
 
         Calendar time = data.getTime();
@@ -95,16 +101,7 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
         String timeShort = sdf.format(time.getTime());
 
         ((TextView) el.findViewById(R.id.time)).setText(timeShort);
-//        el.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                Intent intent = new Intent()
-//                Log.i(TAG, "onClick: SelectedBoardItem Clicked with an ID of " + data.getId());
-//                Intent intent = new Intent(activityContext, BoardActivity.class);
-//                intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
-//                activityContext.startActivity(intent);
-//            }
-//        });
+
 
 
 

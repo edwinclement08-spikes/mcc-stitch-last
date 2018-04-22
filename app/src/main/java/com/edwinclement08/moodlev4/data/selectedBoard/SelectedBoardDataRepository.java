@@ -31,14 +31,18 @@ public class SelectedBoardDataRepository implements StitchClientListener {
     private Activity parentActivity;
 
 
-    public ArrayList<SelectedBoardItem> metaDataSet = null;
+    public SelectedBoardItem getMetaDataSet() {
+        return metaDataSet;
+    }
+
+    public SelectedBoardItem metaDataSet = null;
     public ArrayList<SelectedBoardItem.Message> dataSet = null;
 
     public SelectedBoardDataRepository(String boardId, Activity parentActivity) {
         this.boardId = boardId;
     this.parentActivity = parentActivity;
         dataSet = new ArrayList<SelectedBoardItem.Message>();
-        metaDataSet  = new ArrayList<SelectedBoardItem>();
+//        metaDataSet  = new ArrayList<SelectedBoardItem>();
 
         StitchClientManager.registerListener(this);
 
@@ -84,7 +88,7 @@ public class SelectedBoardDataRepository implements StitchClientListener {
                         SelectedBoardItem boardData = array.get(0);
                         Log.i(TAG, "then: return data" + boardData.toString());
                         dataSet.addAll(boardData.getMessages());
-                        metaDataSet.add(boardData);
+                        metaDataSet = boardData;
                         Log.d(TAG, "then: sfe" + dataSet.toString());
 
                     }

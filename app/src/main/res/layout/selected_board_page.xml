@@ -29,7 +29,8 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout_selected_board"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/selected_board_recycler_view"
@@ -38,5 +39,40 @@
             android:scrollbars="vertical" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/message_enter_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:background="@drawable/entry_box"
+        >
+
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter Text" />
+
+        <Button
+            android:id="@+id/attachFilesButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            android:layout_weight="0"
+            android:background="@android:drawable/ic_input_add" />
+
+        <Button
+            android:id="@+id/sendMessageButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            android:layout_weight="0"
+            android:background="@drawable/ic_menu_send" />
+
+
+    </LinearLayout>
 
 </LinearLayout>
