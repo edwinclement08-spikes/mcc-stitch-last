@@ -2,17 +2,28 @@ package com.edwinclement08.moodlev4;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.edwinclement08.moodlev4.data.board.BoardDataRepository;
+import com.edwinclement08.moodlev4.data.board.BoardItemAdapter;
+import com.google.android.gms.tasks.OnSuccessListener;
+
 public class BoardListFragment extends Fragment implements NamedFragments{
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     public String titleName = "Boards";
+
+
+    BoardDataRepository boardDataRepository;
+    public String TAG = "BoardListFragment";
 
 
     @Override
@@ -22,6 +33,7 @@ public class BoardListFragment extends Fragment implements NamedFragments{
         View view = inflater.inflate(R.layout.board_page, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.boards_recycler_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mRecyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -29,15 +41,44 @@ public class BoardListFragment extends Fragment implements NamedFragments{
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        mAdapter = new BoardItemAdapter(getContext());
+        boardDataRepository = new BoardDataRepository();
+
+        mAdapter = new BoardItemAdapter(getContext(), boardDataRepository);
         mRecyclerView.setAdapter(mAdapter);
 
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Refresh items
+                refreshItems();
+            }
+        });
+
         return view;
+    }
+
+    void refreshItems() {
+
+        ((BoardItemAdapter) mAdapter).updateDataset().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                onItemsLoadComplete();
+            }
+        });
+    }
+
+    void onItemsLoadComplete() {
+        mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public String getTitle() {
         return "Boards";
     }
+
+
+
+
 }
 
