@@ -1,11 +1,21 @@
 package com.edwinclement08.moodlev4;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class BoardActivity extends AppCompatActivity {
 
@@ -25,6 +35,40 @@ public class BoardActivity extends AppCompatActivity {
             }
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
+
+        Fragment fragment = null;
+        Class fragmentClass = SelectedBoardFragment.class;
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.frameSelectedBoard, fragment).commit();
+
+//        setTitle(((NamedFragments) fragment).getTitle());
+
+//        ((FrameLayout) findViewById(R.id.frameSelectedBoard));
+
+
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+
+        df.setTimeZone(tz);
+        String nowAsISO = df.format(new Date());
+        df.setTimeZone(TimeZone.getTimeZone("GMT+5:30"));
+        String nowAsISO2 = df.format(new Date());
+
+//        ((TextView)findViewById(R.id.textView7)).setText(nowAsISO);
+//        ((TextView)findViewById(R.id.textView8)).setText(nowAsISO2);
+
     }
 
 }

@@ -12,7 +12,7 @@ import java.util.ListIterator;
 
 // Singleton class which manages a StitchClient and
 // a list of the listeners that have yet to receive it.
-class StitchClientManager {
+public class StitchClientManager {
     private static StitchClientManager _shared = null;
 
     private StitchClient stitchClient = null;
