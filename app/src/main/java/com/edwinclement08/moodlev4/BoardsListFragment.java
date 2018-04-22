@@ -9,11 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.edwinclement08.moodlev4.data.board.BoardDataRepository;
-import com.edwinclement08.moodlev4.data.board.BoardItemAdapter;
+import com.edwinclement08.moodlev4.data.boards.BoardsDataRepository;
+import com.edwinclement08.moodlev4.data.boards.BoardsItemAdapter;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-public class BoardListFragment extends Fragment implements NamedFragments{
+public class BoardsListFragment extends Fragment implements NamedFragments{
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -22,15 +22,15 @@ public class BoardListFragment extends Fragment implements NamedFragments{
     public String titleName = "Boards";
 
 
-    BoardDataRepository boardDataRepository;
-    public String TAG = "BoardListFragment";
+    BoardsDataRepository boardsDataRepository;
+    public String TAG = "BoardsListFragment";
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.board_page, container, false);
+        View view = inflater.inflate(R.layout.boards_page, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.boards_recycler_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
@@ -41,9 +41,9 @@ public class BoardListFragment extends Fragment implements NamedFragments{
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        boardDataRepository = new BoardDataRepository();
+        boardsDataRepository = new BoardsDataRepository();
 
-        mAdapter = new BoardItemAdapter(getContext(), boardDataRepository);
+        mAdapter = new BoardsItemAdapter(getContext(), boardsDataRepository);
         mRecyclerView.setAdapter(mAdapter);
 
 
@@ -60,7 +60,7 @@ public class BoardListFragment extends Fragment implements NamedFragments{
 
     void refreshItems() {
 
-        ((BoardItemAdapter) mAdapter).updateDataset().addOnSuccessListener(new OnSuccessListener<Void>() {
+        ((BoardsItemAdapter) mAdapter).updateDataset().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 onItemsLoadComplete();

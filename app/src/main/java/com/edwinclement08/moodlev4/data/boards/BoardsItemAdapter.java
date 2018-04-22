@@ -1,4 +1,4 @@
-package com.edwinclement08.moodlev4.data.board;
+package com.edwinclement08.moodlev4.data.boards;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,12 +18,12 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.ViewHolder> {
-    private List<BoardItem> mDataset;
+public class BoardsItemAdapter extends RecyclerView.Adapter<BoardsItemAdapter.ViewHolder> {
+    private List<BoardsItem> mDataset;
 
-    public String TAG = "BoardAdapter";
+    public String TAG = "BoardsItemAdapter";
 
-    BoardDataRepository dataRepository;
+    BoardsDataRepository dataRepository;
 
     private Context activityContext;
 
@@ -42,18 +42,18 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
 
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public BoardItemAdapter(Context context, BoardDataRepository dataRepository) {
+    public BoardsItemAdapter(Context context, BoardsDataRepository dataRepository) {
 
         activityContext = context;
         this.dataRepository = dataRepository;
 
 
         updateDataset();
-        mDataset = new ArrayList<BoardItem>();
+        mDataset = new ArrayList<BoardsItem>();
     }
 
     public Task<Void> updateDataset()  {
-        final BoardItemAdapter ref = this;
+        final BoardsItemAdapter ref = this;
 
         return this.dataRepository.refresh().addOnSuccessListener(new OnSuccessListener<Void>() {
             public void onSuccess(Void x) {
@@ -67,8 +67,8 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     // Create new views (invoked by the layout manager)
     @NonNull
     @Override
-    public BoardItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
-                                                          int viewType) {
+    public BoardsItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
+                                                           int viewType) {
         // create a new view
         View v =  LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.board_tab_item_layout, parent, false);
@@ -81,7 +81,7 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        final BoardItem data = mDataset.get(position);
+        final BoardsItem data = mDataset.get(position);
         View el = holder.boardItemView;
         ((TextView) el.findViewById(R.id.name)).setText(data.getName());
         ((TextView) el.findViewById(R.id.lastMessage)).setText(data.getTags().toString());
@@ -89,9 +89,11 @@ public class BoardItemAdapter extends RecyclerView.Adapter<BoardItemAdapter.View
             @Override
             public void onClick(View v) {
 //                Intent intent = new Intent()
-                Log.i(TAG, "onClick: BoardItem Clicked with an ID of " + data.getId());
+                Log.i(TAG, "onClick: SelectedBoardItem Clicked with an ID of " + data.getId());
                 Intent intent = new Intent(activityContext, BoardActivity.class);
                 intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
+                intent.putExtra("id", data.getId());
+                intent.putExtra("name", data.getName());
                 activityContext.startActivity(intent);
             }
         });

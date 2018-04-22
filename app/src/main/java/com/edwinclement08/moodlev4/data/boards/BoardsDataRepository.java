@@ -1,4 +1,4 @@
-package com.edwinclement08.moodlev4.data.board;
+package com.edwinclement08.moodlev4.data.boards;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,39 +16,39 @@ import org.bson.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoardDataRepository implements StitchClientListener {
-    public String TAG = "BoardDataRepository";
+public class BoardsDataRepository implements StitchClientListener {
+    public String TAG = "BoardsDataRepository";
 
     private StitchClient _client;
     private MongoClient _mongoClient;
 
 
-    public ArrayList<BoardItem> dataSet = null;
+    public ArrayList<BoardsItem> dataSet = null;
 
-    public BoardDataRepository()   {
+    public BoardsDataRepository()   {
 
-        dataSet = new ArrayList<BoardItem>();
+        dataSet = new ArrayList<BoardsItem>();
 
         StitchClientManager.registerListener(this);
 
     }
 
-    private List<BoardItem> convertDocsToBoards(final List<Document> documents) {
-        final List<BoardItem> items = new ArrayList<>(documents.size());
+    private List<BoardsItem> convertDocsToBoards(final List<Document> documents) {
+        final List<BoardsItem> items = new ArrayList<>(documents.size());
         for (final Document doc : documents) {
-            items.add(new BoardItem(doc));
+            items.add(new BoardsItem(doc));
         }
         return items;
     }
 
-    public ArrayList<BoardItem> getDataSet() {
+    public ArrayList<BoardsItem> getDataSet() {
             return dataSet;
     }
 
     public Task<Void> refresh()    {
         MongoClient.Collection boards = _mongoClient.getDatabase("data").getCollection("boards");
 
-        final BoardDataRepository ref = this;
+        final BoardsDataRepository ref = this;
 
         return boards.find(new Document(),500).continueWithTask(new Continuation<List<Document>, Task<Void>>() {
             @Override

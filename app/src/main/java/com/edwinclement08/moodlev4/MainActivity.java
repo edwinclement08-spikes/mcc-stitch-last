@@ -21,45 +21,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import com.mongodb.stitch.android.Auth;
 import com.mongodb.stitch.android.StitchClient;
 
-import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
-
-import com.mongodb.stitch.android.AuthListener;
-import com.mongodb.stitch.android.StitchClient;
-import com.mongodb.stitch.android.auth.AvailableAuthProviders;
 import com.mongodb.stitch.android.auth.UserProfile;
-import com.mongodb.stitch.android.auth.anonymous.AnonymousAuthProvider;
-import com.mongodb.stitch.android.auth.oauth2.facebook.FacebookAuthProvider;
-import com.mongodb.stitch.android.auth.oauth2.google.GoogleAuthProvider;
 import com.mongodb.stitch.android.services.mongodb.MongoClient;
 
-import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-
-import org.bson.Document;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-
-import static com.google.android.gms.auth.api.Auth.GOOGLE_SIGN_IN_API;
-import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
 
 //https://github.com/koush/ion
 
@@ -195,7 +165,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_boards) {
             // Handle the Boards action
-           setMainFragment(BoardListFragment.class);
+           setMainFragment(BoardsListFragment.class);
 
         } else if (id == R.id.nav_camera) {
             // Handle the camera action
@@ -272,7 +242,7 @@ public class MainActivity extends AppCompatActivity
         Log.i(TAG, "onReady: StitchClient received in MainActivity");
 //        initLogin();
 
-        setMainFragment(BoardListFragment.class);
+        setMainFragment(BoardsListFragment.class);
 
     }
 
