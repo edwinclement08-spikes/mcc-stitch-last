@@ -90,6 +90,9 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
         final SelectedBoardItem.Message data = mDataset.get(position);
         View el = holder.boardItemView;
 
+        Log.i(TAG, "onBindViewHolder: data author " + data.getAuthor() );
+        Log.i(TAG, "onBindViewHolder: author name email" + userData.getIdToUserMap().get(data.getAuthor()));
+
         String authorName = userData.getIdToUserMap().get(data.getAuthor()).get(0);
         Log.i(TAG, "onBindViewHolder: " + authorName);
         ((TextView) el.findViewById(R.id.author)).setText(authorName);
@@ -101,8 +104,6 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
         String timeShort = sdf.format(time.getTime());
 
         ((TextView) el.findViewById(R.id.time)).setText(timeShort);
-
-
 
 
     }

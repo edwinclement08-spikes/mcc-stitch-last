@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity
                                 Log.d(TAG, data.toString() );;
                                 Log.d(TAG, data.keySet().toString());
 
-                                ImageView imageView = findViewById(R.id.imageView);
+//                                ImageView imageView = findViewById(R.id.imageView);
 
                                 String imageURL = profile.getData().get("picture").toString();
 //                                Ion.with(imageView)
@@ -108,20 +108,23 @@ public class MainActivity extends AppCompatActivity
 
 
                                 userData = UserData.getInstance();
-                                Task<String> userTask = userData.getUserData();
-                                userTask.continueWithTask(new Continuation<String, Task<Void>>() {
-                                    @Override
-                                    public Task<Void> then(@NonNull Task<String> task) throws Exception {
-                                        if (task.isSuccessful()) {
-                                            final String result = task.getResult();
-                                            userData.setName(name);
-                                            userData.setEmail(email);
-                                            userData.saveUserData();
-
-                                        }
-                                        return null;
-                                    }
-                                });
+                                userData.setName(name);
+                                userData.setEmail(email);
+                                userData.checkUserData();
+//                                Task<String> userTask = userData.getUserData();
+//                                userTask.continueWithTask(new Continuation<String, Task<Void>>() {
+//                                    @Override
+//                                    public Task<Void> then(@NonNull Task<String> task) throws Exception {
+//                                        if (task.isSuccessful()) {
+//                                            final String result = task.getResult();
+//                                            userData.setName(name);
+//                                            userData.setEmail(email);
+//                                            userData.saveUserData();
+//
+//                                        }
+//                                        return null;
+//                                    }
+//                                });
 
 
 

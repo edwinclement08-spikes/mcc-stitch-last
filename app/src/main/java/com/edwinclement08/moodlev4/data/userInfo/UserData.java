@@ -97,6 +97,34 @@ public class UserData implements StitchClientListener {
         return  _mongoClient.getDatabase("data").getCollection("userInfo");
     }
 
+    public Task<String> checkUserData() {
+        final Document doc = new Document();
+        doc.put("owner_id", _client.getUserId());
+
+        return getUserDataCollection().find(doc, 1).continueWithTask(new Continuation<List<Document>, Task<String>>() {
+            @Override
+            public Task<String> then(@NonNull Task<List<Document>> task) throws Exception {
+                if (task.isSuccessful()) {
+                    final List<Document> documents = task.getResult();
+                    if(documents.size() > 0) {
+                        Log.d(TAG, "then: There is a previously Existing user" + documents.get(0).toJson());
+
+                        return Tasks.forResult("Success");
+                    } else {
+                        Log.i(TAG, "then: no user with that id exist yet, saving the user details-");
+                        saveUserData();
+                        return Tasks.forResult("Failure");
+                    }
+
+                } else {
+                    Log.e(TAG, "Error refreshing list", task.getException());
+                    return Tasks.forException(task.getException());
+                }
+            }
+        });
+
+    }
+
     public void saveUserData()    {
         final Document doc = new Document();
         doc.put("owner_id", _client.getUserId());

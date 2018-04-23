@@ -150,7 +150,7 @@ public class SelectedBoardFragment extends Fragment {
             }
         });
 
-        view.findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.attachFilesButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBrowse(v);
