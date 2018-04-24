@@ -1,7 +1,6 @@
 package com.edwinclement08.moodlev4.data.selectedBoard;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.edwinclement08.moodlev4.BoardActivity;
 import com.edwinclement08.moodlev4.R;
+import com.edwinclement08.moodlev4.data.Message;
 import com.edwinclement08.moodlev4.data.userInfo.UserData;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -19,12 +18,12 @@ import com.google.android.gms.tasks.Task;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoardItemAdapter.ViewHolder> {
-    private ArrayList<SelectedBoardItem.Message> mDataset;
+    private ArrayList<Message> mDataset;
 
     public String TAG = "SelectedBoardItemAdapter";
+    private Boolean DEBUG = false;
 
     SelectedBoardDataRepository dataRepository;
     UserData userData;
@@ -52,7 +51,7 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
         this.dataRepository = dataRepository;
         userData = UserData.getInstance();
 
-        mDataset = new ArrayList<SelectedBoardItem.Message>();
+        mDataset = new ArrayList<Message>();
 
         updateDataset();
     }
@@ -63,7 +62,7 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
         return this.dataRepository.refresh().addOnSuccessListener(new OnSuccessListener<Void>() {
             public void onSuccess(Void x) {
                 mDataset = ref.dataRepository.getDataSet();
-                Log.i(TAG, "onSuccess: data from repo received");
+                if(DEBUG) Log.i(TAG, "onSuccess: data from repo received");
                 ref.notifyDataSetChanged();
             }
         });
@@ -87,14 +86,14 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        final SelectedBoardItem.Message data = mDataset.get(position);
+        final Message data = mDataset.get(position);
         View el = holder.boardItemView;
 
-        Log.i(TAG, "onBindViewHolder: data author " + data.getAuthor() );
-        Log.i(TAG, "onBindViewHolder: author name email" + userData.getIdToUserMap().get(data.getAuthor()));
+        if(DEBUG) Log.i(TAG, "onBindViewHolder: data author " + data.getAuthor() );
+        if(DEBUG) Log.i(TAG, "onBindViewHolder: author name email" + userData.getIdToUserMap().get(data.getAuthor()));
 
-        String authorName = userData.getIdToUserMap().get(data.getAuthor()).get(0);
-        Log.i(TAG, "onBindViewHolder: " + authorName);
+        String authorName = userData.getIdToUserMap().get(data.getAuthor()).get("name");
+        if(DEBUG) Log.i(TAG, "onBindViewHolder: " + authorName);
         ((TextView) el.findViewById(R.id.author)).setText(authorName);
 
         if(data.hasMessageText())  ((TextView) el.findViewById(R.id.message)).setText(data.getMessageText());

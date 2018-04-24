@@ -2,6 +2,8 @@ package com.edwinclement08.moodlev4.data.selectedBoard;
 
 import android.util.Log;
 
+import com.edwinclement08.moodlev4.data.Message;
+
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -17,53 +19,9 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 public class SelectedBoardItem {
-    public class Message {
-        private UUID uuid;
-        private Calendar time;
-
-
-
-        private String author;
-        private HashMap<String, Object> data;
-
-        public Message(final Document document)  {
-            data = new HashMap<>();
-            
-            uuid = UUID.fromString(document.getString("uuid"));
-
-            author = document.getString("author");
-            time = Calendar.getInstance(TimeZone.getTimeZone("India"));
-
-            last_update.setTimeInMillis( Long.parseLong(document.getString("time")) * 1000L);
-
-            Document dataDocument = document.get("data",Document.class);
-
-            if(dataDocument.containsKey("text"))    {
-                data.put("text",dataDocument.getString("text"));
-            }
-        }
-
-        public boolean hasMessageText()    {
-            return data.containsKey("text");
-        }
-
-        public String getMessageText()   {
-            return data.get("text").toString();
-        }
-
-        public Calendar getTime()   {
-            return time;
-        }
-        public String getAuthor() {
-            return author;
-        }
-
-
-
-
-    }
 
     private String TAG = "SelectedBoardItem";
+    private Boolean DEBUG = false;
     private ObjectId objectId;
 
     private String owner_id;
@@ -93,36 +51,40 @@ public class SelectedBoardItem {
 
         last_update = Calendar.getInstance(TimeZone.getTimeZone("India"));
 
-        last_update.setTimeInMillis( Long.parseLong(document.getString("last_update")) * 1000L);
+        String last_update = document.getString("last_update");
+        if(last_update.equals(""))  {
+            last_update = "0";
+        }
+        this.last_update.setTimeInMillis( Long.parseLong(last_update) * 1000L);
 
 
         final ArrayList<Document> documents  = document.get("messages", ArrayList.class);
 
-        Log.i(TAG, "SelectedBoardItem: going to parse messages");
+        if(DEBUG) Log.i(TAG, "SelectedBoardItem: going to parse messages");
         ArrayList<Message> p =convertDocsToMessages(documents);
-        Log.i(TAG, "SelectedBoardItem: parse complete");
+        if(DEBUG) Log.i(TAG, "SelectedBoardItem: parse complete");
 
         for( Message x : p) {
-            Log.i(TAG, "SelectedBoardItem: tset loop");
-            Log.i(TAG, "SelectedBoardItem: " + x.toString());
+            if(DEBUG) Log.i(TAG, "SelectedBoardItem: tset loop");
+            if(DEBUG) Log.i(TAG, "SelectedBoardItem: " + x.toString());
             messages.add(x);
-            Log.i(TAG, "SelectedBoardItem: its the add");
+            if(DEBUG) Log.i(TAG, "SelectedBoardItem: its the add");
 
         }
 //        messages.addAll(p);
-        Log.i(TAG, "SelectedBoardItem: created an object");
+        if(DEBUG) Log.i(TAG, "SelectedBoardItem: created an object");
 
     }
 
     private ArrayList<Message> convertDocsToMessages(final List<Document> documents) {
-        Log.i(TAG, "convertDocsToMessages: arrival Count = " + documents.toString() );
+        if(DEBUG) Log.i(TAG, "convertDocsToMessages: arrival Count = " + documents.toString() );
         final ArrayList<Message> items = new ArrayList<>(documents.size());
         for (final Document doc : documents) {
-            Log.i(TAG, "convertDocsToMessages: " + documents.toString());
+            if(DEBUG) Log.i(TAG, "convertDocsToMessages: " + documents.toString());
             items.add(new Message(doc));
         }
-        Log.i(TAG, "convertDocsToMessages: Parsing of Object complete");
-        Log.i(TAG, "convertDocsToMessages: " + items.toString());
+        if(DEBUG) Log.i(TAG, "convertDocsToMessages: Parsing of Object complete");
+        if(DEBUG) Log.i(TAG, "convertDocsToMessages: " + items.toString());
         return items;
     }
 

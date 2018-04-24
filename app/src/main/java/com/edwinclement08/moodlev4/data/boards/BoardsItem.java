@@ -24,7 +24,7 @@ public class BoardsItem {
         name = document.getString("name");
         tags = (List<String>)document.get("tags");
         id = document.getString("id");
-        Log.d(TAG, "SelectedBoardItem: " +  tags.toString() );
+//        Log.d(TAG, "SelectedBoardItem: " +  tags.toString() );
     }
 
     public String getName()    {

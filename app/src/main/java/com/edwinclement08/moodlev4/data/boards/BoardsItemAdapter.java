@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.edwinclement08.moodlev4.BoardActivity;
+import com.edwinclement08.moodlev4.activities.BoardActivity;
 import com.edwinclement08.moodlev4.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +20,7 @@ import java.util.List;
 
 public class BoardsItemAdapter extends RecyclerView.Adapter<BoardsItemAdapter.ViewHolder> {
     private List<BoardsItem> mDataset;
+    private Boolean DEBUG = false;
 
     public String TAG = "BoardsItemAdapter";
 
@@ -89,7 +90,7 @@ public class BoardsItemAdapter extends RecyclerView.Adapter<BoardsItemAdapter.Vi
             @Override
             public void onClick(View v) {
 //                Intent intent = new Intent()
-                Log.i(TAG, "onClick: SelectedBoardItem Clicked with an ID of " + data.getId());
+                if(DEBUG) Log.i(TAG, "onClick: SelectedBoardItem Clicked with an ID of " + data.getId());
                 Intent intent = new Intent(activityContext, BoardActivity.class);
                 intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
                 intent.putExtra("id", data.getId());
