@@ -15,7 +15,9 @@ import com.mongodb.stitch.android.services.mongodb.MongoClient;
 
 import org.bson.Document;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SelectedBoardDataRepository implements StitchClientListener {
@@ -30,6 +32,8 @@ public class SelectedBoardDataRepository implements StitchClientListener {
 
     private Activity parentActivity;
 
+    private boolean justUpdatedFlag_forScrollDown;
+
 
     public SelectedBoardItem getMetaDataSet() {
         return metaDataSet;
@@ -40,7 +44,7 @@ public class SelectedBoardDataRepository implements StitchClientListener {
 
     public SelectedBoardDataRepository(String boardId, Activity parentActivity) {
         this.boardId = boardId;
-    this.parentActivity = parentActivity;
+        this.parentActivity = parentActivity;
         dataSet = new ArrayList<Message>();
 //        metaDataSet  = new ArrayList<SelectedBoardItem>();
 
@@ -49,19 +53,21 @@ public class SelectedBoardDataRepository implements StitchClientListener {
     }
 
     private ArrayList<SelectedBoardItem> convertDocsToSelectedBoardItems(final List<Document> documents) {
-        if(DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: arrival Count = " + documents.toString());
+        if (DEBUG)
+            Log.i(TAG, "convertDocsToSelectedBoardItems: arrival Count = " + documents.toString());
         final ArrayList<SelectedBoardItem> items = new ArrayList<>(documents.size());
-        if(DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: Documents number " + documents.size());
+        if (DEBUG)
+            Log.i(TAG, "convertDocsToSelectedBoardItems: Documents number " + documents.size());
         for (final Document doc : documents) {
-            if(DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: " + doc.toJson());
+            if (DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: " + doc.toJson());
             SelectedBoardItem x = new SelectedBoardItem(doc);
             items.add(x);
 
 
         }
-        if(DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: Completed");
+        if (DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: Completed");
 
-        if(DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: "+ items.toString());
+        if (DEBUG) Log.i(TAG, "convertDocsToSelectedBoardItems: " + items.toString());
         return items;
     }
 
@@ -78,18 +84,41 @@ public class SelectedBoardDataRepository implements StitchClientListener {
             public Task<Void> then(@NonNull final Task<List<Document>> task) throws Exception {
                 if (task.isSuccessful()) {
                     final List<Document> documents = task.getResult();
-                    dataSet.clear();
                     ArrayList<SelectedBoardItem> array = convertDocsToSelectedBoardItems(documents);
-                    if(array.size() == 0)   {
+                    if (array.size() == 0) {
 //                        parentActivity.findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
-                        if(DEBUG) Log.i(TAG, "then: No Messages on the Board");
+                        if (DEBUG) Log.i(TAG, "then: No Messages on the Board");
                     } else {
-                        SelectedBoardItem boardData = array.get(0);
-                        if(DEBUG) Log.i(TAG, "then: return data" + boardData.toString());
-                        dataSet.addAll(boardData.getMessages());
-                        metaDataSet = boardData;
-                        Log.d(TAG, "then: sfe" + dataSet.toString());
 
+                        SelectedBoardItem boardData = array.get(0);
+
+                        if (metaDataSet != null) {
+                            Calendar oldCal = metaDataSet.getLast_update();
+                            Calendar newCal = boardData.getLast_update();
+                            if (checkIfBoardIsOutDated(newCal, oldCal)) {
+                                if (DEBUG) Log.i(TAG, "then: Data is outdated, update");
+                                dataSet.clear();
+                                dataSet.addAll(boardData.getMessages());
+                                metaDataSet = boardData;
+                                justUpdatedFlag_forScrollDown = true;
+
+                            } else {
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                                String timeShort = sdf.format(newCal.getTime());
+                                if (DEBUG) Log.i(TAG, "Data is unchanged, retain old data Last updated on " + timeShort);
+
+                            }
+
+                        } else {
+                            dataSet.clear();
+                            dataSet.addAll(boardData.getMessages());
+                            metaDataSet = boardData;
+
+                        }
+
+
+                        Log.d(TAG, "then: sfe" + dataSet.toString());
                     }
 
 
@@ -102,10 +131,30 @@ public class SelectedBoardDataRepository implements StitchClientListener {
         });
     }
 
+    public boolean isJustUpdated() {
+        if(justUpdatedFlag_forScrollDown)   {
+            justUpdatedFlag_forScrollDown = false;
+            return true;
+        }
+        return false;
+    }
+
     public Task<Void> getRefreshTask() {
         return refreshTask;
     }
 
+    public boolean checkIfBoardIsOutDated(Calendar newCal, Calendar oldCal) {
+        Long newTimeInSec = ((Long) (newCal.getTimeInMillis() / 1000));
+        Long curTimeInSec = ((Long) (oldCal.getTimeInMillis() / 1000));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        String timeShort = sdf.format(newCal.getTime());
+        if (DEBUG) Log.i(TAG, "then: (new) Last updated on " + timeShort);
+        timeShort = sdf.format(oldCal.getTime());
+        if (DEBUG) Log.i(TAG, "then: (old) Last updated on " + timeShort);
+
+        return newTimeInSec > curTimeInSec;
+    }
 
 
     @Override

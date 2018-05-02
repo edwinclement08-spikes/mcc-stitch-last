@@ -42,6 +42,8 @@ public class MessageTransfer implements StitchClientListener {
 
         Document update = new Document();
         update.put("$push", new Document("messages", messageDoc));
+        update.put("$set", new Document("last_update", messageDoc.getString("time")));
+
 
         boardData.updateOne(select, update);
 

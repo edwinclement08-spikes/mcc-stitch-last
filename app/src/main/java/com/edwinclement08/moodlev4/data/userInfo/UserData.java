@@ -20,7 +20,7 @@ import java.util.List;
 
 public class UserData implements StitchClientListener {
     public String TAG = "UserData";
-    private Boolean DEBUG = true;
+    private Boolean DEBUG = false;
 
     private static UserData obj;
 
@@ -111,7 +111,7 @@ public class UserData implements StitchClientListener {
         _client = stitchClient;
         id = _client.getUserId();
         _mongoClient = new MongoClient(_client, "mongodb-atlas");
-        Log.d(TAG, "onReady: Got conn for UserData");
+        if(DEBUG) Log.i(TAG, "onReady: Got conn for UserData");
 //        refreshTask = refresh();
         initializeIdToUseMap();
 
@@ -128,7 +128,7 @@ public class UserData implements StitchClientListener {
                     final List<Document> documents = task.getResult();
                     if (documents.size() == 1) {
                         if (DEBUG)
-                            Log.i(TAG, "then: There is a previously Existing user" + documents.get(0).toJson());
+                            Log.i(TAG, "then: xThere is a previously Existing user" + documents.get(0).toJson());
                         return Tasks.forResult("Success");
                     } else if (documents.size() > 1) {
                         Log.e(TAG, "then: WE HAVE TWO USERS WITH SAME ID");
@@ -160,7 +160,7 @@ public class UserData implements StitchClientListener {
             @Override
             public void onComplete(@NonNull final Task<Document> task) {
                 if (task.isSuccessful()) {
-                    Log.i(TAG, "Saving User to DB Successful");
+                    if(DEBUG) Log.i(TAG, "Saving User to DB Successful");
                 } else {
                     Log.e(TAG, "Error adding item", task.getException());
                 }

@@ -63,6 +63,7 @@ public class SelectedBoardItemAdapter extends RecyclerView.Adapter<SelectedBoard
             public void onSuccess(Void x) {
                 mDataset = ref.dataRepository.getDataSet();
                 if(DEBUG) Log.i(TAG, "onSuccess: data from repo received");
+
                 ref.notifyDataSetChanged();
             }
         });

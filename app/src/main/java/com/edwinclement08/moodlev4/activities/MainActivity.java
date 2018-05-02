@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.edwinclement08.moodlev4.FileManager.CacheSystem;
 import com.edwinclement08.moodlev4.util.DownloadImageTask;
 import com.edwinclement08.moodlev4.util.NamedFragments;
 import com.edwinclement08.moodlev4.R;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity
 
     private String TAG = "MoodleV4:MainActivity";
     private Boolean DEBUG = false;
-
 
 
     @Override
@@ -82,31 +82,35 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-       setUserProfileData();
+        setUserProfileData();
+
+        CacheSystem.getInstance().setContext(this);
+        CacheSystem.getInstance().checkCache();
     }
 
-    public void setUserProfileData()    {
-        if(_client != null) {
-            if(_client.isAuthenticated())   {
+    public void setUserProfileData() {
+        if (_client != null) {
+            if (_client.isAuthenticated()) {
                 final Auth user = _client.getAuth();
-                if(user != null){
+                if (user != null) {
                     user.getUserProfile().addOnCompleteListener(new OnCompleteListener<UserProfile>() {
                         @Override
                         public void onComplete(@NonNull Task<UserProfile> task) {
-                            if(task.isSuccessful()) {
+                            if (task.isSuccessful()) {
                                 Log.d(TAG, "onCreate: got a user, and details");
                                 UserProfile profile = task.getResult();
 
-                                Map<String, Object> data =  profile.getData();
+                                Map<String, Object> data = profile.getData();
 
                                 final String name = data.get("name").toString();
-                                final String email= data.get("email").toString();
-                                final String picture= data.get("picture").toString();
+                                final String email = data.get("email").toString();
+                                final String picture = data.get("picture").toString();
 //                                final String gender= data.get("gender").toString();
 //                                final String first_name= data.get("first_name").toString();
 //                                final String last_name= data.get("last_name").toString();
 
-                                Log.d(TAG, "User Name is :" + name );;
+                                Log.d(TAG, "User Name is :" + name);
+                                ;
 
                                 // Set the Profile Photo
                                 new DownloadImageTask((ImageView) findViewById(R.id.imageView))
@@ -121,8 +125,10 @@ public class MainActivity extends AppCompatActivity
                                 userData.synchronize();
 
 
-                                ((TextView)findViewById(R.id.nav_header_name)).setText(data.get("name").toString());  ;
-                                ((TextView)findViewById(R.id.nav_header_email)).setText(data.get("email").toString());  ;
+                                ((TextView) findViewById(R.id.nav_header_name)).setText(data.get("name").toString());
+                                ;
+                                ((TextView) findViewById(R.id.nav_header_email)).setText(data.get("email").toString());
+                                ;
 
 
 //                                Task<String> userTask = userData.getUserData();
@@ -181,7 +187,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if(DEBUG) Log.i(TAG, "onOptionsItemSelected: Settings button pressed");
+            if (DEBUG) Log.i(TAG, "onOptionsItemSelected: Settings button pressed");
             return true;
         }
 
@@ -197,7 +203,7 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_boards) {
             // Handle the Boards action
-           setMainFragment(BoardsListFragment.class);
+            setMainFragment(BoardsListFragment.class);
 
         } else if (id == R.id.nav_camera) {
             // Handle the camera action
@@ -211,21 +217,21 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
-        } else if (id == R.id.nav_logout)   {
+        } else if (id == R.id.nav_logout) {
 
             final MainActivity referenceToContext = this;
-            if(_client != null) {
+            if (_client != null) {
                 // StitchClient Exists
-                if(DEBUG) Log.i(TAG, "onNavigationItemSelected: Trying Logout");
+                if (DEBUG) Log.i(TAG, "onNavigationItemSelected: Trying Logout");
                 Task<Void> logoutTask = _client.logout();
 
                 logoutTask.addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
-                    // go Back to the login Screen
-                        Log.d(TAG, "go back to login Screen"   );
-                        Intent intent = new Intent(referenceToContext, AuthActivity.class );
+                        // go Back to the login Screen
+                        Log.d(TAG, "go back to login Screen");
+                        Intent intent = new Intent(referenceToContext, AuthActivity.class);
                         // | Intent.FLAG_ACTIVITY_NO_HISTORY
                         intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
                         startActivity(intent);
@@ -246,10 +252,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void setMainFragment(Class fragmentClass)   {
+    public void setMainFragment(Class fragmentClass) {
         Fragment fragment = null;
 
-        if(fragmentClass != null)   {
+        if (fragmentClass != null) {
             try {
                 fragment = (Fragment) fragmentClass.newInstance();
             } catch (Exception e) {
@@ -260,7 +266,7 @@ public class MainActivity extends AppCompatActivity
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
-            setTitle(((NamedFragments)fragment).getTitle());
+            setTitle(((NamedFragments) fragment).getTitle());
 
         }
     }
@@ -271,13 +277,12 @@ public class MainActivity extends AppCompatActivity
         this._client = stitchClient;
 
         _mongoClient = new MongoClient(_client, "mongodb-atlas");
-        if(DEBUG) Log.i(TAG, "onReady: StitchClient received in MainActivity");
+        if (DEBUG) Log.i(TAG, "onReady: StitchClient received in MainActivity");
 //        initLogin();
 
         setMainFragment(BoardsListFragment.class);
 
     }
-
 
 
 }

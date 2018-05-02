@@ -116,7 +116,7 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
         final Document doc = new Document();
         doc.put("owner_id", _client.getUserId());
         try {
-            String encoded = Base64.encodeToString(data,Base64.DEFAULT);
+            String encoded = Base64.encodeToString(data, Base64.DEFAULT);
             doc.put("bytes", encoded);
 
 //            ArrayList<Byte> byteObjects = new ArrayList<>(data.length);
@@ -132,7 +132,7 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
             @Override
             public void onComplete(@NonNull final Task<Document> task) {
                 if (task.isSuccessful()) {
-                    if(DEBUG) Log.i(TAG, "onComplete: File Upload Successful");
+                    if (DEBUG) Log.i(TAG, "onComplete: File Upload Successful");
                 } else {
                     Log.e(TAG, "Error adding item", task.getException());
                 }
@@ -149,17 +149,17 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
             Uri uri = data.getData();
 
             String FilePath = getRealPathFromURI(uri); // should the path be here in this string
-            if(DEBUG) Log.i(TAG, "onActivityResult: path" + uri);
-            if(DEBUG) Log.i(TAG, "onActivityResult: path" + FilePath);
+            if (DEBUG) Log.i(TAG, "onActivityResult: path" + uri);
+            if (DEBUG) Log.i(TAG, "onActivityResult: path" + FilePath);
         } else if (requestCode == PICKFILE_REQUEST_CODE) {
             Uri uri = data.getData();
 
             if (uri != null) {
-                if(DEBUG) Log.i(TAG, "onActivityResult: path" + uri);
+                if (DEBUG) Log.i(TAG, "onActivityResult: path" + uri);
                 try {
                     InputStream pfd = getActivity().getContentResolver().openInputStream(uri);
                     if (pfd != null) {
-                        if(DEBUG) Log.i(TAG, "onActivityResult: available " + pfd.available());
+                        if (DEBUG) Log.i(TAG, "onActivityResult: available " + pfd.available());
                         byte[] fileData = new byte[pfd.available()];
 
 
@@ -188,7 +188,7 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
 //                    Log.e(TAG, "onActivityResult: IOException", e);
 //                }
             } else {
-                if(DEBUG) Log.i(TAG, "onActivityResult: No Item Selected");
+                if (DEBUG) Log.i(TAG, "onActivityResult: No Item Selected");
             }
 
 
@@ -205,6 +205,7 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+
     private String boardId;
     private String boardName;
 
@@ -238,7 +239,7 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
             boardName = intent.getStringExtra("name");
             getActivity().setTitle(boardName);
 
-            if(DEBUG) Log.i(TAG, "onCreateView: Intent requests a page for ID = " + boardId);
+            if (DEBUG) Log.i(TAG, "onCreateView: Intent requests a page for ID = " + boardId);
             // specify an adapter (see also next example)
 
         } catch (NullPointerException e) {
@@ -254,7 +255,7 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
         x.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                if(DEBUG) Log.i(TAG, "onSuccess: Trying to set visibility");
+                if (DEBUG) Log.i(TAG, "onSuccess: Trying to set visibility");
                 ArrayList<Message> p = selectedBoardDataRepository.getDataSet();
                 if (p.size() == 0) {
                     fragmentView.findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);
@@ -266,16 +267,18 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
                 // Check if current user is the owner
                 UserData userData = UserData.getInstance();
                 String userId = userData.getId();
-                if(DEBUG) Log.i(TAG, "isUserTheOwner: UserID " + userId);
-                if(DEBUG) Log.i(TAG, "isUserTheOwner:  Owner " + owner_id);
+                if (DEBUG) Log.i(TAG, "isUserTheOwner: UserID " + userId);
+                if (DEBUG) Log.i(TAG, "isUserTheOwner:  Owner " + owner_id);
                 if (userId.equals(owner_id)) {
-                    if(DEBUG) Log.i(TAG, "isUserTheOwner:  True");
+                    if (DEBUG) Log.i(TAG, "isUserTheOwner:  True");
 
                     fragmentView.findViewById(R.id.message_enter_section).setVisibility(View.VISIBLE);
-                 } else {
-                    if(DEBUG) Log.i(TAG, "isUserTheOwner:  False");
+                } else {
+                    if (DEBUG) Log.i(TAG, "isUserTheOwner:  False");
 
                 }
+
+                mRecyclerView.scrollToPosition(p.size() - 1);
 
             }
         });
@@ -324,7 +327,20 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
         ExternalStorageManager esm = ExternalStorageManager.getManager();
 
         uiUpdater.startUpdates();
+
+//        mRecyclerView.
+
         return fragmentView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiUpdater.stopUpdates();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
     }
 
     void refreshItems() {
@@ -332,8 +348,11 @@ public class SelectedBoardFragment extends Fragment implements StitchClientListe
             @Override
             public void onSuccess(Void aVoid) {
                 onItemsLoadComplete();
+                if (selectedBoardDataRepository.isJustUpdated())
+                    mRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 
-                if(DEBUG) Log.i(TAG, "onSuccess: Trying to set visibility");
+
+                if (DEBUG) Log.i(TAG, "onSuccess: Trying to set visibility");
                 ArrayList<Message> p = selectedBoardDataRepository.getDataSet();
                 if (p.size() == 0) {
                     fragmentView.findViewById(R.id.boardEmptyMessageView).setVisibility(View.VISIBLE);

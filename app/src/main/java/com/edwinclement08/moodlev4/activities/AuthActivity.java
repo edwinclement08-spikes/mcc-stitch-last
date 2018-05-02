@@ -114,7 +114,7 @@ public class AuthActivity extends AppCompatActivity  implements StitchClientList
     }
 
     public void initMoodleView() {
-        Log.d(TAG, "initMoodleView: Done"   );
+        if(DEBUG)Log.i(TAG, "initMoodleView: Done"   );
         Intent intent = new Intent(this, MainActivity.class);
         // | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_TASK_ON_HOME
         intent.setFlags(intent.getFlags()); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
